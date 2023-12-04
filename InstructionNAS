@@ -1,0 +1,108 @@
+Open a terminal session on your usual computer. To access your Raspberry Pi via SSH, run the following command, replacing <username> with the username you chose in Imager:
+
+$ ssh <username>@pi-nas.local
+$ ssh <username>@pi-nas.local
+The authenticity of host 'pi-nas.local (fd81:b8a1:261d:1:acd4:610c:b069:ac16)' can't be established.
+ED25519 key fingerprint is SHA256:s6aWAEe8xrbPmJzhctei7/gEQitO9mj2ilXigelBm04.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/
+[fingerprint])? yes
+Warning: Permanently added 'pi-nas.local' (ED25519) to the list of known hosts.
+
+<username>@pi-nas.local's password:
+Linux pi-nas 6.1.21-v8+ #1642 SMP PREEMPT Mon Apr  3 17:24:16 BST 2023 aarch64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Tue Oct 24 09:41:00 2023
+<username>@pi-nas:~ $
+When asked for your password, use the password you created in Raspberry Pi Imager.
+
+Configure storage
+Now that the Raspberry Pi is up and running, it’s time to transform it into network storage.
+
+Find your drive
+First, we need to find the identifiers for the drives we want to format. To see the storage devices currently connected to your system, run the following command:
+
+$ lsblk
+You should see output similar to the following:
+
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda           8:0    0   1.8T  0 disk
+mmcblk0     179:0    0 238.8G  0 disk
+├─mmcblk0p1 179:1    0   256M  0 part /boot
+└─mmcblk0p2 179:2    0 238.5G  0 part /
+This command describes storage devices connected to your Raspberry Pi. The mmcblk0 device is your microSD card. The first USB storage device you connect should show up as Storage Device A, or sda for short. If you connect additional USB storage devices, you’ll see them as Storage Device B (sdb), C (sdc), etc.
+
+Partition drive
+Next, partition your drive so Raspberry Pi OS recognizes it as a single storage device:
+
+$ sudo fdisk /dev/sda
+When prompted:
+
+Enter n to create a new partition.
+
+If a partition already exists, use d to delete it.
+
+Enter p for primary partition.
+
+Use the default option for all other prompts.
+
+WARNING
+Back up all data stored on the external drive before you partition! The partition process will erase the drive.
+Format drive
+Now that the drive has been partitioned, we need to format it so Raspberry Pi OS can read and write data. The following command formats your drive into the ext4 file system:
+
+$ sudo mkfs.ext4 /dev/sda1
+Mount drive
+Next, mount the drive to make it available to the file system on your Raspberry Pi:
+
+$ sudo mount /dev/sda1
+And ensure that the drive is mounted after each boot:
+
+$ sudo nano /etc/fstab
+Add the following line at the end of the file:
+
+/dev/sda1 /mnt/sda1/ ext4 defaults,noatime 0 1
+Press Ctrl+X, then Y, and finally Enter to save the edited file with nano.
+
+Create a shared folder
+Run the following command to create a shared folder on your drive:
+
+$ sudo chmod -R 777 /mnt/sda1/shared
+Run the following command to grant read, write, and execute permissions to the folder to all users on your Raspberry Pi:
+
+$ sudo chmod -R 777 /mnt/sda1/shared
+Share drive over your network
+Run the following command to install Samba, a tool that shares directories over a network between computers:
+
+$ sudo apt install samba samba-common-bin
+Then tell Samba to share the directory over the network. We can give Samba instructions via the Samba configuration file, smb.conf. Open the configuration file in an editor:
+
+$ sudo nano /etc/samba/smb.conf
+And add the following line at the end of the file:
+
+[shared]
+path=/mnt/sda1/shared
+writeable=Yes
+create mask=0777
+directory mask=0777
+public=no
+Press Ctrl+X, then Y, and finally Enter to save the edited file with nano.
+
+Restart Samba to load the configuration changes:
+
+$ sudo systemctl restart smbd
+Grant drive access
+Finally, you’ll want to grant access to your Samba share so only authenticated users can access files over the network.
+
+Run the following command to create a user to manage Samba sharing:
+
+$ sudo adduser pi-nas-user
+And add a password to that user with the following command:
+
+$ sudo smbpasswd -a username
