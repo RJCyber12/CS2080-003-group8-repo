@@ -1,0 +1,45 @@
+Setup
+
+
+Find the /dev identifier of the HDD partition you want to encrypt, on my system, it's /dev/sda1. Note that this output is from running the command after I've configured the encrypted partition.
+
+pi@piback ~ $ lsblk
+NAME                    MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                       8:0    0   1.8T  0 disk  
+└─sda1                    8:1    0   1.8T  0 part  
+  └─securebackup (dm-0) 254:0    0   1.8T  0 crypt /media/secure
+mmcblk0                 179:0    0   3.7G  0 disk  
+├─mmcblk0p1             179:1    0    56M  0 part  /boot
+└─mmcblk0p2             179:2    0   3.7G  0 part  /
+Format the partition, which I don't think you need to do, but I thought it would be good to remind myself of the mkfs command.
+
+pi@piback ~ $ sudo mkfs.ext4 /dev/sda1
+Install cryptsetup, and so as not to need rebooting, start the dm-crypt modules.
+
+pi@piback ~ $ sudo apt-get install cryptsetup
+pi@piback ~ $ sudo modprobe dm-crypt sha256 aes
+Run cryptsetup to encrypt the partition (this step is where you set the password for the disk, make sure you make a note of it).
+
+pi@piback ~ $ sudo cryptsetup --verify-passphrase luksFormat /dev/sda1 -c aes -s 256 -h sha256
+Open the encrypted partition.
+
+pi@piback ~ $ sudo cryptsetup luksOpen /dev/sda1 securebackup
+Format the encrypted partition.
+
+pi@piback ~ $ sudo mkfs -t ext4 -m 1 /dev/mapper/securebackup
+Create a mount point, and mount the encrypted partition, and make it available to the non-root user.
+
+pi@piback ~ $ sudo mkdir /media/secure
+pi@piback ~ $ sudo mount /dev/mapper/securebackup /media/secure/
+pi@piback ~ $ sudo chown pi:pi /media/secure/
+Edit the /etc/crypttab file and add the following entry to the bottom.
+
+pi@piback ~ $ sudo nano /etc/crypttab
+
+securebackup	/dev/sda1	none	luks
+Edit the /etc/fstab file, adding this entry at the bottom.
+
+pi@piback ~ $ sudo nano /etc/fstab
+
+/dev/mapper/securebackup	/media/secure	ext4	defaults,rw	0	0
+Now if you reboot (with the HDD still attached), the boot sequence will pause at the point the system mounts the encrypted HDD, and you'll need to type in the password.
