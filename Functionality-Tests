@@ -1,0 +1,55 @@
+1. Check SSH connectivity:
+ssh username@raspberry_pi_ip_address 
+2. Run a basic command on the NAS:
+ssh username@raspberry_pi_ip_address 'ls /path/to/your/nas/files' 
+3. Check NAS disk space:
+bashCopy code
+df -h 
+4. Check NAS system information:
+uname -a 
+5. Check NAS network information:
+ifconfig 
+6. Check NAS process information:
+ps aux 
+7. Monitor NAS resource usage:
+top 
+8. Transfer a file to the NAS using SCP:
+scp test.txt username@raspberry_pi_ip_address:/path/to/your/nas/files 
+9. Ping the NAS:
+ping raspberry_pi_ip_address 
+10. Check open ports on the NAS:
+nmap raspberry_pi_ip_address 
+11. Create a directory on the NAS:
+ssh username@raspberry_pi_ip_address 'mkdir /path/to/your/nas/new_directory' 
+12. Copy a file within the NAS:
+ssh username@raspberry_pi_ip_address 'cp /path/to/source/file /path/to/destination/' 
+13. Move a file within the NAS:
+ssh username@raspberry_pi_ip_address 'mv /path/to/source/file /path/to/destination/' 
+14. Remove a file on the NAS:
+ssh username@raspberry_pi_ip_address 'rm /path/to/your/nas/file_to_remove' 
+15. List NAS users:
+getent passwd 
+16. Check permissions of a file or directory:
+ssh username@raspberry_pi_ip_address 'ls -l /path/to/your/nas/file_or_directory' 
+17. Change ownership of a file or directory:
+ssh username@raspberry_pi_ip_address 'chown new_owner:new_group /path/to/your/nas/file_or_directory' 
+18. Change permissions of a file or directory:
+ssh username@raspberry_pi_ip_address 'chmod 755 /path/to/your/nas/file_or_directory' 
+19. Check the status of a specific service (e.g., Samba, NFS, etc.):
+ssh username@raspberry_pi_ip_address 'systemctl status service_name' 
+20. Restart a specific NAS service:
+ssh username@raspberry_pi_ip_address 'sudo systemctl restart service_name' 
+21. Create a backup of a directory:
+ssh username@raspberry_pi_ip_address 'tar czvf backup.tar.gz /path/to/your/nas/directory_to_backup' 
+22. Restore from a backup:
+scp username@raspberry_pi_ip_address:/path/to/backup.tar.gz /local/path tar xzvf backup.tar.gz -C /path/to/restore 
+23. Check NAS system logs:
+ssh username@raspberry_pi_ip_address 'cat /var/log/syslog' 
+24. Check NAS application-specific logs:
+ssh username@raspberry_pi_ip_address 'cat /var/log/application_log' 
+
+
+
+
+
+
