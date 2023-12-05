@@ -1,0 +1,58 @@
+1. Connect to  Raspberry Pi NAS via SSH
+ssh your_username@your_raspberry_pi_ip
+2. Check the SSH server configuration
+cat /etc/ssh/sshd_config | grep -iE "ciphers|kexalgorithms|macs"
+3. Navigate to the OpenMediaVault installation directory
+cd /etc/openmediavault/config.xml
+4. Check for encryption-related configurations
+grep -iE "ssl|encryption" config.xml
+
+# Cryptographic Function Testing:
+1. Make the script executable
+chmod +x crypto_test.sh
+2. Run the cryptographic function test
+./crypto_test.sh
+
+# SSH Key Pair Testing:
+1. Generate an SSH key pair
+ssh-keygen -t rsa -b 4096
+2. Copy the public key to the Raspberry Pi NAS
+ssh-copy-id your_username@your_raspberry_pi_ip
+3. Test SSH connection with key authentication
+ssh -i ~/.ssh/id_rsa your_username@your_raspberry_pi_ip
+
+# Check SSL/TLS Connection/Certificates:
+1. View SSL/TLS certificates information
+openssl x509 -in /etc/ssl/certs/your_certificate.pem -text -noout
+2. Test SSL/TLS connection to your NAS
+openssl s_client -connect your_raspberry_pi_ip:your_ssl_port
+
+# Check for Weak Ciphers/Heartbleed vulnerability:
+1. Test SSL/TLS connection and check for weak ciphers
+nmap --script ssl-enum-ciphers -p your_ssl_port your_raspberry_pi_ip
+2. Test for Heartbleed vulnerability
+nmap --script ssl-heartbleed -p your_ssl_port your_raspberry_pi_ip
+
+# Generate and Verify Hashes:
+1. Generate a SHA-256 hash for a file
+sha256sum your_file
+2. Generate an MD5 hash for a file
+md5sum your_file
+3. Verify a file against a given hash
+sha256sum -c <<< "generated_sha256_hash your_file"
+md5sum -c <<< "generated_md5_hash your_file"
+
+# GPG Encryption:
+1. Generate a GPG key pair
+gpg --gen-key
+2. Encrypt a file with GPG
+gpg -e -r recipient_email your_file
+3. Decrypt a GPG-encrypted file
+gpg -d your_encrypted_file.gpg > decrypted_file
+
+# Check for File Integrity:
+1. Create an MD5 checksum for a file
+md5sum your_file > checksum.md5
+2. Verify the integrity of the file
+md5sum -c checksum.md5
+
