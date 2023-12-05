@@ -3,7 +3,6 @@ ssh username@raspberry_pi_ip_address
 2. Run a basic command on the NAS:
 ssh username@raspberry_pi_ip_address 'ls /path/to/your/nas/files' 
 3. Check NAS disk space:
-bashCopy code
 df -h 
 4. Check NAS system information:
 uname -a 
@@ -47,6 +46,8 @@ scp username@raspberry_pi_ip_address:/path/to/backup.tar.gz /local/path tar xzvf
 ssh username@raspberry_pi_ip_address 'cat /var/log/syslog' 
 24. Check NAS application-specific logs:
 ssh username@raspberry_pi_ip_address 'cat /var/log/application_log' 
+25. Check OpenMediaVault Services:
+sudo service openmediavault status
 
 
 
