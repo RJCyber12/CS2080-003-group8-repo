@@ -1,5 +1,11 @@
-1. Check SSH connectivity:
+# Check SSH connectivity:
 ssh username@raspberry_pi_ip_address 
+Copy the public key to the Raspberry Pi NAS
+ssh-copy-id your_username@your_raspberry_pi_ip
+Test SSH connection with key authentication
+ssh -i ~/.ssh/id_rsa your_username@your_raspberry_pi_ip
+
+
 2. Run a basic command on the NAS:
 ssh username@raspberry_pi_ip_address 'ls /path/to/your/nas/files' 
 3. Check NAS disk space:
@@ -48,7 +54,6 @@ ssh username@raspberry_pi_ip_address 'cat /var/log/syslog'
 ssh username@raspberry_pi_ip_address 'cat /var/log/application_log' 
 25. Check OpenMediaVault Services:
 sudo service openmediavault status
-
 
 
 
