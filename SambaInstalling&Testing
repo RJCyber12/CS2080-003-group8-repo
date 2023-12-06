@@ -1,0 +1,18 @@
+1. Install Samba Plugin:
+log in to the web interface. Navigate to the "Plugins" section and install the "openmediavault-dnsmasq" plugin.
+
+2. Configure Samba:
+After installing the Samba plugin.
+In the web interface, go to "Services" > "SMB/CIFS."
+Click on the "Shares" tab and create a new share. Define the share path, permissions, and other settings.
+Go to the "Settings" tab to configure general settings for the Samba service.
+Save the changes and apply the configuration.
+
+3. Test Samba:
+Open a terminal on your Raspberry Pi or connect to it via SSH.
+sudo apt-get update
+sudo apt-get install samba-client
+smbclient //<your_pi_ip>/<share_name> -U <your_username>
+ls
+put testfile.txt
+exit
